@@ -1,0 +1,45 @@
+# CI for KITONGA-ICT studio frontend
+# Runs lint + production build on every push and merge request.
+
+default:
+  image: node:22-alpine
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - .npm/
+      - node_modules/
+
+variables:
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+stages:
+  - install
+  - quality
+  - build
+
+install:
+  stage: install
+  script:
+    - npm ci --prefer-offline --no-audit --no-fund
+  artifacts:
+    paths:
+      - node_modules/
+    expire_in: 1 hour
+
+lint:
+  stage: quality
+  needs: [install]
+  script:
+    - npm run lint
+
+build:
+  stage: build
+  needs: [install]
+  script:
+    - npm run build
+  artifacts:
+    paths:
+      - .next/
+    expire_in: 1 day
