@@ -99,7 +99,7 @@ export function Navbar() {
                 "px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors border",
                 isActive("/login")
                   ? "bg-[#e8f0fb] text-[#0067b8] border-transparent"
-                  : "text-[#333] hover:text-[#0a0a0a] border-transparent hover:border-[#9ca3af]",
+                  : "text-[#333] hover:text-[#0a0a0a] border-transparent hover:border-black",
               )}
             >
               Sign in
@@ -122,7 +122,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setOpen((v) => !v)}
-              className="grid h-8 w-8 place-items-center rounded-lg border border-[#9ca3af] text-[#333] hover:text-[#0067b8] transition-colors"
+              className="grid h-8 w-8 place-items-center rounded-lg border border-black text-[#333] hover:text-[#0067b8] transition-colors"
               aria-label={open ? "Close menu" : "Open menu"}
               aria-expanded={open}
             >
@@ -143,7 +143,7 @@ export function Navbar() {
         <div className="absolute inset-0 bg-slate-900/15" onClick={() => setOpen(false)} />
         <div
           className={cn(
-            "absolute inset-x-3 top-2 rounded-2xl bg-white border border-[#9ca3af] transition-transform duration-200",
+            "absolute inset-x-3 top-2 rounded-2xl bg-white border border-black transition-transform duration-200",
             open ? "translate-y-0" : "-translate-y-2",
           )}
         >

@@ -33,7 +33,7 @@ export function About() {
             <div className="flex flex-wrap gap-2.5 mt-5">
               <Link
                 href="/portfolio"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[#9ca3af] bg-white text-[13px] font-semibold text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-black bg-white text-[13px] font-semibold text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
               >
                 View our work
                 <ArrowUpRight size={13} aria-hidden />

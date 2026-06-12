@@ -110,7 +110,7 @@ export function Portfolio({ limit }: { limit?: number }) {
                 className={`rounded-full border px-3.5 py-1.5 text-[12px] font-medium transition-colors ${
                   isActive
                     ? "border-[#0067b8] bg-[#0067b8] text-white"
-                    : "border-[#9ca3af] bg-white text-[#333] hover:border-[#0067b8] hover:text-[#0067b8]"
+                    : "border-black bg-white text-[#333] hover:border-[#0067b8] hover:text-[#0067b8]"
                 }`}
               >
                 {f}
@@ -125,12 +125,12 @@ export function Portfolio({ limit }: { limit?: number }) {
             {Array.from({ length: limit ?? 6 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] rounded-2xl border border-[#9ca3af] bg-white animate-pulse"
+                className="aspect-[4/3] rounded-2xl border border-black bg-white animate-pulse"
               />
             ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-[#9ca3af] bg-white p-12 text-center">
+          <div className="rounded-2xl border border-dashed border-black bg-white p-12 text-center">
             <p className="text-[13.5px] text-[#444]">
               {items.length === 0
                 ? "Portfolio items are uploaded from the admin panel."
@@ -151,7 +151,7 @@ export function Portfolio({ limit }: { limit?: number }) {
             {filtered.map((item) => (
               <article
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-[#9ca3af] bg-white hover:border-[#0067b8]/25 transition-colors"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border border-black bg-white hover:border-[#0067b8]/25 transition-colors"
               >
                 {/* Image / mockup */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl">
@@ -189,7 +189,7 @@ export function Portfolio({ limit }: { limit?: number }) {
                       {item.client} · {item.year}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full border border-[#9ca3af] bg-[#f2f5f9] px-2.5 py-0.5 text-[10.5px] font-medium text-[#333] uppercase tracking-wide">
+                  <span className="shrink-0 rounded-full border border-black bg-[#f2f5f9] px-2.5 py-0.5 text-[10.5px] font-medium text-[#333] uppercase tracking-wide">
                     {item.category}
                   </span>
                 </div>

@@ -41,7 +41,7 @@ export function Hero() {
               </WhatsAppButton>
               <Link
                 href="/services"
-                className="inline-flex items-center justify-center px-5 py-3 rounded-lg border border-[#9ca3af] bg-white text-[14px] font-medium text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors w-full sm:w-auto"
+                className="inline-flex items-center justify-center px-5 py-3 rounded-lg border border-black bg-white text-[14px] font-medium text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors w-full sm:w-auto"
               >
                 See all services
               </Link>
@@ -49,7 +49,7 @@ export function Hero() {
           </div>
 
           {/* Right: image (desktop only) */}
-          <div className="hidden lg:block relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#9ca3af]">
+          <div className="hidden lg:block relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-black">
             <Image
               src="/brand/hero-mobile.webp"
               alt="KITONGA-ICT studio work"

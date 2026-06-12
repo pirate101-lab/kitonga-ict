@@ -50,7 +50,7 @@ export function PhoneInput({
   return (
     <div
       className={cn(
-        "flex items-stretch rounded-xl border-[1.5px] border-[#9ca3af] bg-white transition-colors focus-within:border-[#0067b8] focus-within:ring-2 focus-within:ring-[#0067b8]/20",
+        "flex items-stretch rounded-xl border-[1.5px] border-black bg-white transition-colors focus-within:border-[#0067b8] focus-within:ring-2 focus-within:ring-[#0067b8]/20",
         disabled && "opacity-60 cursor-not-allowed",
         className,
       )}
@@ -58,7 +58,7 @@ export function PhoneInput({
       {/* Locked country code */}
       <span
         className={cn(
-          "select-none flex items-center px-3 text-sm font-semibold text-[#555] border-r border-[#9ca3af] bg-[#f5f5f5] rounded-l-xl",
+          "select-none flex items-center px-3 text-sm font-semibold text-[#555] border-r border-black bg-[#f5f5f5] rounded-l-xl",
           padY,
         )}
         aria-hidden
