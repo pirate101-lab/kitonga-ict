@@ -1,0 +1,3 @@
+# WhatsApp Companion Bot — Ignore session data and Chromium cache
+.wwebjs_auth/
+.wwebjs_cache/
