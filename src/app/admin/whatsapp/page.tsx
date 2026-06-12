@@ -29,6 +29,7 @@ type BotStatus = {
   lastSeen: string | null;
   portfolioCount: number;
   lastUpload?: string;
+  pairingCode?: string | null;
 };
 
 type EnvConfig = {
@@ -47,9 +48,8 @@ export default function WhatsAppAdminPage() {
     portfolioCount: 0,
   });
   const [envConfig, setEnvConfig] = useState<Partial<EnvConfig>>({});
-  const [cloudinarySecret, setCloudinarySecret] = useState("");
-  const [cloudinaryUrl, setCloudinaryUrl] = useState("");
-  const [useUrlMode, setUseUrlMode] = useState(false);
+  const [pairingNumber, setPairingNumber] = useState("");
+  const [pairingLoading, setPairingLoading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resetConfirm, setResetConfirm] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -72,6 +72,7 @@ export default function WhatsAppAdminPage() {
           lastSeen: data.lastSeen ?? null,
           portfolioCount: data.portfolioCount ?? 0,
           lastUpload: data.lastUpload,
+          pairingCode: data.pairingCode ?? null,
         });
       }
     } catch { /* silently ignore poll errors */ }
@@ -108,13 +109,6 @@ export default function WhatsAppAdminPage() {
       const payload: Record<string, string> = {
         COMPANION_ALLOWED_NUMBERS: envConfig.COMPANION_ALLOWED_NUMBERS ?? "",
       };
-      if (useUrlMode && cloudinaryUrl) {
-        payload.CLOUDINARY_URL = cloudinaryUrl;
-      } else {
-        if (envConfig.CLOUDINARY_CLOUD_NAME) payload.CLOUDINARY_CLOUD_NAME = envConfig.CLOUDINARY_CLOUD_NAME;
-        if (envConfig.CLOUDINARY_API_KEY) payload.CLOUDINARY_API_KEY = envConfig.CLOUDINARY_API_KEY;
-        if (cloudinarySecret) payload.CLOUDINARY_API_SECRET = cloudinarySecret;
-      }
       if (envConfig.COMPANION_DATA_DIR) payload.COMPANION_DATA_DIR = envConfig.COMPANION_DATA_DIR;
 
       const res = await fetch("/api/admin/whatsapp/env", {
@@ -164,6 +158,31 @@ export default function WhatsAppAdminPage() {
     }
   }
 
+  async function requestPairingCode() {
+    if (!pairingNumber) return;
+    setPairingLoading(true);
+    setError(null);
+    try {
+      const token = getAdminToken();
+      await fetch("/api/admin/whatsapp/env", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ COMPANION_PAIRING_NUMBER: pairingNumber }),
+      });
+      await fetch("/api/admin/whatsapp/restart", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setTimeout(fetchStatus, 3000);
+      setTimeout(fetchStatus, 6000);
+      setTimeout(fetchStatus, 9000);
+    } catch (e) {
+      setError(String(e));
+    } finally {
+      setPairingLoading(false);
+    }
+  }
+
   const isOnline = botStatus.status === "online";
 
   return (
@@ -207,19 +226,43 @@ export default function WhatsAppAdminPage() {
         )}
       </AdminCard>
 
-      {/* ── Instructions card ── */}
+      {/* ── Instructions / Linking card ── */}
       <AdminCard>
         <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-          <Smartphone size={18} aria-hidden /> How to link WhatsApp
+          <Smartphone size={18} aria-hidden /> Link WhatsApp with Pairing Code
         </h2>
-        <ol className="mt-4 space-y-3 text-sm text-foreground-muted list-decimal list-inside">
-          <li>Save your Cloudinary credentials and allowed numbers below, then click <strong className="text-foreground">Save config</strong>.</li>
-          <li>On your server, run: <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground">cd whatsapp-companion && npm install</code> (first time only)</li>
-          <li>Start the bot: <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground">bash scripts/start-companion.sh</code></li>
-          <li>A QR code will appear in the server terminal. Open WhatsApp on your phone → Linked Devices → Link a Device → scan the QR.</li>
-          <li>Once linked, this page auto-updates to show <strong className="text-foreground">online</strong> status (polls every 10 s).</li>
-          <li>For production (auto-restart): <code className="rounded bg-secondary px-1.5 py-0.5 font-mono text-xs text-foreground">bash scripts/start-companion.sh --pm2</code></li>
-        </ol>
+        
+        {!isOnline && (
+          <div className="mt-4 p-4 rounded-xl border border-border bg-secondary">
+            {botStatus.pairingCode ? (
+              <div className="text-center py-4">
+                <p className="text-sm text-foreground-muted mb-3">Enter this 8-digit code in WhatsApp to link:</p>
+                <div className="font-mono text-3xl font-bold tracking-[0.2em] text-primary bg-background-elev inline-block px-6 py-3 rounded-lg border border-primary/30">
+                  {botStatus.pairingCode}
+                </div>
+                <p className="text-xs text-foreground-muted mt-4">Waiting for you to link on your phone...</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-foreground-muted">
+                  To link the bot, enter your WhatsApp phone number (with country code, e.g. 254700000000) and request a pairing code.
+                </p>
+                <AdminField label="Phone number for pairing">
+                  <div className="flex gap-2">
+                    <AdminInput
+                      value={pairingNumber}
+                      onChange={e => setPairingNumber(e.target.value)}
+                      placeholder="254715927114"
+                    />
+                    <AdminButton onClick={requestPairingCode} disabled={pairingLoading || !pairingNumber} type="button">
+                      {pairingLoading ? "Requesting..." : "Get Code"}
+                    </AdminButton>
+                  </div>
+                </AdminField>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="mt-4 rounded-xl border border-border bg-background-elev p-3">
           <p className="text-xs font-mono text-foreground-muted">
@@ -227,66 +270,6 @@ export default function WhatsAppAdminPage() {
             <span className="text-primary">/portfolio Posters &quot;Title&quot;</span> · <span className="text-primary">/photoshop &quot;Title&quot;</span> · <span className="text-primary">/flyer &quot;Title&quot;</span><br />
             <span className="text-primary">/cv &quot;Title&quot;</span> · <span className="text-primary">/cards &quot;Title&quot;</span> · <span className="text-primary">!status</span> (text only)
           </p>
-        </div>
-      </AdminCard>
-
-      {/* ── Cloudinary config ── */}
-      <AdminCard>
-        <h2 className="font-display text-lg font-semibold text-foreground">Cloudinary credentials</h2>
-        <p className="mt-1 text-sm text-foreground-muted">
-          These are stored in your server&apos;s <code className="font-mono text-xs">.env</code> file — never in the browser.
-          The API secret is write-only for security.
-        </p>
-        <div className="mt-4 flex items-center gap-3">
-          <label className="flex items-center gap-2 text-sm text-foreground cursor-pointer">
-            <input
-              type="checkbox"
-              checked={useUrlMode}
-              onChange={e => setUseUrlMode(e.target.checked)}
-              className="accent-primary"
-            />
-            Use CLOUDINARY_URL format
-          </label>
-        </div>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          {useUrlMode ? (
-            <AdminField
-              label="CLOUDINARY_URL"
-              hint="Format: cloudinary://API_KEY:API_SECRET@cloud_name"
-            >
-              <AdminInput
-                type="password"
-                value={cloudinaryUrl}
-                onChange={e => setCloudinaryUrl(e.target.value)}
-                placeholder="cloudinary://key:secret@cloud"
-              />
-            </AdminField>
-          ) : (
-            <>
-              <AdminField label="Cloud name">
-                <AdminInput
-                  value={envConfig.CLOUDINARY_CLOUD_NAME ?? ""}
-                  onChange={e => setEnvConfig(s => ({ ...s, CLOUDINARY_CLOUD_NAME: e.target.value }))}
-                  placeholder="your-cloud-name"
-                />
-              </AdminField>
-              <AdminField label="API key">
-                <AdminInput
-                  value={envConfig.CLOUDINARY_API_KEY ?? ""}
-                  onChange={e => setEnvConfig(s => ({ ...s, CLOUDINARY_API_KEY: e.target.value }))}
-                  placeholder="123456789012345"
-                />
-              </AdminField>
-              <AdminField label="API secret (write-only)" hint="Leave blank to keep existing secret.">
-                <AdminInput
-                  type="password"
-                  value={cloudinarySecret}
-                  onChange={e => setCloudinarySecret(e.target.value)}
-                  placeholder="Enter new secret to update"
-                />
-              </AdminField>
-            </>
-          )}
         </div>
       </AdminCard>
 

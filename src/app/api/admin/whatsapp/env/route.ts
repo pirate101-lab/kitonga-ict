@@ -12,7 +12,6 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ ok: false, error: 'Owner only' }, { status: 403 });
   }
   const body = (await req.json()) as Record<string, string>;
-  // Only allow updating safe keys
   const ALLOWED_KEYS = new Set([
     'COMPANION_ALLOWED_NUMBERS',
     'CLOUDINARY_URL',
@@ -21,6 +20,7 @@ export async function PATCH(req: NextRequest) {
     'CLOUDINARY_API_SECRET',
     'COMPANION_DATA_DIR',
     'COMPANION_WA_SESSION_PATH',
+    'COMPANION_PAIRING_NUMBER',
   ]);
 
   let envContent = '';

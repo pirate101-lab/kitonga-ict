@@ -76,9 +76,22 @@ async function writeStatus(patch) {
   await fs.rename(tmp, file);
 }
 
-client.on('qr', qr => {
+client.on('qr', async qr => {
   console.log('\n📱  Scan this QR code with your WhatsApp to link the bot:\n');
   qrcode.generate(qr, { small: true });
+
+  const pairingNumber = process.env.COMPANION_PAIRING_NUMBER;
+  if (pairingNumber) {
+    try {
+      const code = await client.requestPairingCode(pairingNumber);
+      console.log('Pairing Code:', code);
+      await writeStatus({ pairingCode: code, qr: null, status: 'pairing' });
+    } catch (e) {
+      console.error('Failed to request pairing code:', e);
+    }
+  } else {
+    await writeStatus({ qr, status: 'qr-ready' });
+  }
 });
 
 client.on('ready', async () => {
@@ -88,6 +101,8 @@ client.on('ready', async () => {
     linkedNumber: info?.wid?.user ?? null,
     displayName: info?.pushname ?? null,
     lastSeen: new Date().toISOString(),
+    pairingCode: null,
+    qr: null,
   });
   console.log('✅  WhatsApp bot is ready. Waiting for commands...');
   console.log(`   Allowed numbers: ${[...ALLOWED].join(', ')}`);

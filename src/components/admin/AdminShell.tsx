@@ -147,7 +147,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <aside className="lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)]">
           <div className="rounded-2xl border border-card-border bg-card p-5">
             <div className="flex items-center justify-between">
-              <Logo />
+              <div className="flex items-center gap-2">
+                <Logo withWordmark={false} />
+                <span className="font-display font-black text-foreground select-none leading-none tracking-tighter text-sm md:text-lg">
+                  KITONGA-ICT
+                </span>
+              </div>
               <span className="rounded-full border border-card-border bg-secondary px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em] text-primary">
                 Admin
               </span>
