@@ -80,14 +80,9 @@ export function FooterLinksForm() {
 
   return (
     <AdminCard>
-      <h2 className="font-display text-lg font-semibold text-foreground">
+      <h2 className="font-display text-base font-semibold text-foreground">
         Footer &amp; social links
       </h2>
-      <p className="mt-1 text-sm text-foreground-muted">
-        These two URLs power the WhatsApp and TikTok icons in the public
-        footer. Updates persist in <code className="font-mono text-primary">data/site-settings.json</code> and the footer
-        picks them up on the next page load — no redeploy needed.
-      </p>
 
       <form onSubmit={onSubmit} className="mt-5 grid gap-4 sm:max-w-xl">
         <AdminField

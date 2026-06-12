@@ -67,9 +67,16 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const token = getAdminToken();
+
+    // Optimistic: if a token exists in localStorage, show the UI immediately
+    // while we verify in the background. This eliminates the blank-screen flash.
+    if (token) {
+      setSignedIn(true);
+      setChecking(false);
+    }
+
     let cancelled = false;
     (async () => {
-      setChecking(true);
       try {
         const headers: HeadersInit = token
           ? { Authorization: `Bearer ${token}` }
@@ -107,7 +114,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [pathname, router]);
+  // Run once on mount only — pathname changes do NOT re-verify
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Close mobile nav on route change
   useEffect(() => {
@@ -177,8 +186,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             aria-hidden
             onClick={() => setMobileNavOpen(false)}
           />
-          {/* Panel — right-anchored, max half screen width, sits below header with gap */}
-          <div className="lg:hidden fixed right-0 top-[45px] mt-1 z-40 w-[52vw] max-w-[240px] min-w-[180px] bg-card border border-card-border shadow-lg rounded-bl-2xl rounded-tl-2xl px-2 py-2">
+          {/* Panel — right-anchored with gap from edge, max half screen width */}
+          <div className="lg:hidden fixed right-3 top-[45px] mt-1 z-40 w-[52vw] max-w-[240px] min-w-[180px] bg-card border border-card-border shadow-lg rounded-2xl px-2 py-2">
             <nav className="flex flex-col gap-0.5" aria-label="Admin mobile">
               {visibleNav.map((item) => {
                 const Icon = item.icon;
