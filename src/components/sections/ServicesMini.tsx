@@ -19,7 +19,7 @@ export function ServicesMini() {
             eyebrow="What we do"
             title={
               <>
-                Fourteen service lines.{" "}
+                Our service lines.{" "}
                 <span className="text-primary">One studio.</span>
               </>
             }
