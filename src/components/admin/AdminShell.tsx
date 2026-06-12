@@ -6,9 +6,11 @@ import { useEffect, useState } from "react";
 import {
   Activity,
   Box,
+  ChevronDown,
   Image as ImageIcon,
   LayoutDashboard,
   LogOut,
+  Menu,
   MessageCircle,
   MessageSquare,
   Package,
@@ -19,6 +21,7 @@ import {
   UserCog,
   Users,
   Cloud,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/Logo";
@@ -60,6 +63,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   const [checking, setChecking] = useState(true);
   const [signedIn, setSignedIn] = useState(false);
   const [me, setMe] = useState<SafeAdmin | null>(null);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   useEffect(() => {
     const token = getAdminToken();
@@ -82,8 +86,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           setMe(data.admin);
           setSignedIn(true);
         } else if (!cancelled) {
-          // Stale or missing session - clear it and send the admin back
-          // to the studio sign-in with this route preserved.
           clearAdminToken();
           setSignedIn(false);
           setMe(null);
@@ -107,10 +109,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     };
   }, [pathname, router]);
 
+  // Close mobile nav on route change
+  useEffect(() => {
+    setMobileNavOpen(false);
+  }, [pathname]);
+
   function onSignOut() {
     const token = getAdminToken();
-    // Fire-and-forget; even if the server is unreachable, we still
-    // clear the local token so the browser cannot keep acting as admin.
     fetch("/api/admin/logout", {
       method: "POST",
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -126,8 +131,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   if (checking) {
     return (
-      <div className="min-h-screen bg-background pt-10 pb-16">
-        <div className="container-narrow">
+      <div className="min-h-screen bg-background pb-16">
+        <div className="container-narrow pt-10">
           <div className="rounded-2xl border border-card-border bg-card p-6 text-sm text-muted-foreground">
             Verifying admin session...
           </div>
@@ -141,9 +146,88 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen bg-background pt-10 pb-16">
-      <div className="container-narrow grid gap-8 lg:grid-cols-[260px_1fr]">
-        <aside className="lg:sticky lg:top-10 lg:max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <div className="min-h-screen bg-background pb-16">
+
+      {/* ── Mobile sticky header (hidden on lg+) ── */}
+      <header className="lg:hidden sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-card border-b border-card-border">
+        <Logo withWordmark={false} />
+        <span className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          Admin Studio
+        </span>
+        <button
+          type="button"
+          aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
+          aria-expanded={mobileNavOpen}
+          onClick={() => setMobileNavOpen((v) => !v)}
+          className="grid h-9 w-9 place-items-center rounded-xl border border-card-border text-foreground hover:text-primary hover:border-primary/40 transition-colors"
+        >
+          {mobileNavOpen ? <X size={16} aria-hidden /> : <Menu size={16} aria-hidden />}
+        </button>
+      </header>
+
+      {/* ── Mobile dropdown nav ── */}
+      {mobileNavOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="lg:hidden fixed inset-0 z-30 bg-black/20"
+            aria-hidden
+            onClick={() => setMobileNavOpen(false)}
+          />
+          {/* Panel */}
+          <div className="lg:hidden fixed inset-x-0 top-[53px] z-40 bg-card border-b border-card-border shadow-md px-4 py-3">
+            {me && (
+              <div className="flex items-center gap-2.5 rounded-xl border border-card-border bg-secondary px-3 py-2 mb-3">
+                <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-primary-foreground">
+                  <ShieldCheck size={12} aria-hidden />
+                </div>
+                <div className="min-w-0">
+                  <div className="truncate text-sm font-semibold text-foreground">{me.username}</div>
+                  <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-primary">{me.role}</div>
+                </div>
+              </div>
+            )}
+            <nav className="flex flex-col gap-1" aria-label="Admin mobile">
+              {visibleNav.map((item) => {
+                const Icon = item.icon;
+                const isActive = item.exact
+                  ? pathname === item.href
+                  : pathname?.startsWith(item.href);
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMobileNavOpen(false)}
+                    className={cn(
+                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors border",
+                      isActive
+                        ? "bg-secondary text-primary border-primary/30"
+                        : "text-muted-foreground hover:text-primary hover:bg-secondary border-transparent",
+                    )}
+                  >
+                    <Icon size={16} aria-hidden />
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </nav>
+            <button
+              type="button"
+              onClick={onSignOut}
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-card-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-destructive hover:text-destructive"
+            >
+              <LogOut size={14} aria-hidden />
+              Sign out of studio
+            </button>
+          </div>
+        </>
+      )}
+
+      {/* ── Main grid ── */}
+      <div className="container-narrow grid gap-8 lg:grid-cols-[260px_1fr] pt-6 lg:pt-10">
+
+        {/* ── Desktop sidebar (hidden below lg) ── */}
+        <aside className="hidden lg:block lg:sticky lg:top-10 lg:max-h-[calc(100vh-4rem)] overflow-y-auto">
           <div className="rounded-2xl border border-card-border bg-card p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

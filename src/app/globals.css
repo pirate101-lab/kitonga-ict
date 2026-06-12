@@ -312,6 +312,19 @@ html.cursor-custom * { cursor: auto !important; }
   -webkit-backdrop-filter: none !important;
 }
 
+/* Solid surface utility — alternative to .glass, no backdrop-filter */
+.solid-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--card-border));
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm, none);
+  transition: border-color var(--dur-fast, 0.15s) var(--ease-out, ease), box-shadow var(--dur-fast, 0.15s) var(--ease-out, ease);
+}
+.solid-card:hover {
+  border-color: hsl(var(--primary) / 0.4);
+  box-shadow: var(--shadow-md, none);
+}
+
 .divider-glow,
 .divider-rainbow {
   height: 1px;
@@ -530,6 +543,13 @@ html.cursor-custom * { cursor: auto !important; }
   border-radius: 999px;
 }
 ::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.6); }
+
+/* Footer single-line enforcement */
+footer .footer-row { flex-wrap: nowrap; overflow-x: auto; }
+
+/* WhyChooseUs mobile card padding */
+#why-us .glass { padding: 1rem; }
+@media (min-width: 768px) { #why-us .glass { padding: 1.25rem; } }
 
 input, textarea, select {
   -webkit-appearance: none;

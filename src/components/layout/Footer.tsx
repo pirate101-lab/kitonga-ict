@@ -4,88 +4,62 @@ import { SITE, buildWhatsAppUrl } from "@/lib/site";
 import { readSiteSettings } from "@/lib/site-settings-db";
 
 /**
- * Footer — ultra-minimal single-row.
- * Logo image + wordmark · contact · social. Min height on all devices.
+ * Footer — single py-2.5 horizontal row.
+ * Logo · wordmark · social icons · email · copyright.
+ * Total height ≈ 44px.
  */
 export async function Footer() {
   const settings = await readSiteSettings();
+  const year = new Date().getFullYear();
 
   const whatsappHref = buildWhatsAppUrl(
     `Hello KITONGA-ICT! 👋\n\nI'd like to get in touch. — Sent from kitongaict.tech`,
   );
 
   return (
-    <footer id="contact" className="bg-white border-t border-gray-200/30">
+    <footer id="contact" className="border-t border-card-border bg-card py-2.5">
       <div className="container-narrow">
+        <div className="footer-row flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-1">
 
-        {/* Main row */}
-        <div className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
-
-          {/* Logo image + wordmark */}
+          {/* Left: logo + wordmark */}
           <Link href="/" aria-label="KITONGA-ICT home" className="flex items-center gap-2 shrink-0">
             <Image
               src="/brand/logo-round.png"
               alt=""
-              width={28}
-              height={28}
+              width={32}
+              height={32}
               quality={60}
               sizes="32px"
               className="rounded-full object-cover"
-              style={{ width: 28, height: 28 }}
+              style={{ width: 32, height: 32 }}
             />
-            <div>
-              <span className="block text-[12.5px] font-black text-[#0a0a0a] uppercase tracking-tight leading-none">
-                KITONGA-ICT
-              </span>
-              <span className="block text-[10.5px] text-[#444] mt-0.5 leading-none">
-                {SITE.tagline}
-              </span>
-            </div>
+            <span className="hidden sm:inline text-[11px] font-black uppercase tracking-wide text-foreground">
+              {SITE.name}
+            </span>
           </Link>
 
-          {/* Contact details */}
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[12px] text-[#222]">
-            <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="hover:text-[#0067b8] transition-colors">
-              {SITE.whatsappDisplay}
-            </a>
-            <a href={`mailto:${SITE.contactEmail}`} className="hover:text-[#0067b8] transition-colors">
-              {SITE.contactEmail}
-            </a>
-            <span className="hidden sm:inline">{SITE.location}</span>
-          </div>
-
-          {/* Social icons */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Center: social icons + email */}
+          <div className="flex items-center gap-1.5">
             <SocialLink href={settings.social.whatsapp} label="WhatsApp">
               <WhatsAppIcon />
             </SocialLink>
             <SocialLink href={settings.social.tiktok} label="TikTok">
               <TikTokIcon />
             </SocialLink>
+            <a
+              href={whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center px-2.5 py-1 rounded-lg border border-card-border text-[11px] font-medium text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors ml-1"
+            >
+              {SITE.contactEmail}
+            </a>
           </div>
-        </div>
 
-        {/* Legal line */}
-        <div className="border-t border-[#ececec] py-3 flex items-center justify-between gap-3 flex-wrap">
-          <span className="text-[11px] text-[#444]">
-            © {new Date().getFullYear()} {SITE.name}. All rights reserved.
+          {/* Right: copyright */}
+          <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
+            © {year} KITONGA-ICT · Nairobi
           </span>
-          <nav className="flex items-center gap-4" aria-label="Footer navigation">
-            {[
-              { label: "Services", href: "/services" },
-              { label: "Portfolio", href: "/portfolio" },
-              { label: "About", href: "/about" },
-              { label: "Order", href: "/order" },
-            ].map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-[11px] text-[#444] hover:text-[#0067b8] transition-colors"
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
         </div>
       </div>
     </footer>
@@ -99,7 +73,7 @@ function SocialLink({ href, label, children }: { href: string; label: string; ch
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="grid h-8 w-8 place-items-center rounded-lg border-2 border-black/30 text-[#333] hover:text-[#0067b8] hover:border-[#0067b8] transition-colors"
+      className="grid h-8 w-8 place-items-center rounded-lg border border-card-border text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
     >
       {children}
     </a>

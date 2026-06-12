@@ -10,7 +10,7 @@ import {
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 /**
- * Hero — copy-first, no decorative tagline pill.
+ * Hero — copy-first, tighter mobile H1, inline stats strip on mobile.
  */
 export function Hero() {
   const fastOrderHref = buildWhatsAppUrl(DEFAULT_FAST_ORDER_MESSAGE);
@@ -21,8 +21,8 @@ export function Hero() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 py-14 md:py-20 lg:items-center">
 
           {/* Left: text */}
-          <div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-[#0a0a0a] tracking-tight leading-[1.08] mb-5">
+          <div className="pb-6 lg:pb-0">
+            <h1 className="text-[2.75rem] leading-[1.05] sm:text-5xl lg:text-8xl font-bold text-[#0a0a0a] tracking-tight mb-5">
               Design work<br />
               <span className="text-[#0067b8]">done right.</span>
             </h1>
@@ -45,6 +45,24 @@ export function Hero() {
               >
                 See all services
               </Link>
+            </div>
+
+            {/* Mobile-only stats strip */}
+            <div className="lg:hidden flex flex-row items-center gap-5 mt-5 pt-4 border-t border-card-border">
+              <span>
+                <strong className="text-foreground font-black text-base">240+</strong>
+                <span className="text-muted-foreground text-xs font-medium ml-1">Briefs</span>
+              </span>
+              <span className="text-card-border" aria-hidden>·</span>
+              <span>
+                <strong className="text-foreground font-black text-base">64+</strong>
+                <span className="text-muted-foreground text-xs font-medium ml-1">Brands</span>
+              </span>
+              <span className="text-card-border" aria-hidden>·</span>
+              <span>
+                <strong className="text-foreground font-black text-base">5.0★</strong>
+                <span className="text-muted-foreground text-xs font-medium ml-1">Rated</span>
+              </span>
             </div>
           </div>
 
