@@ -56,7 +56,7 @@ export function Services() {
                     return (
                       <article
                         key={service.id}
-                        className="group flex flex-col bg-white rounded-2xl border-2 border-black p-5 hover:border-[#0067b8] transition-colors duration-150"
+                        className="group flex flex-col bg-white rounded-2xl border-2 border-black/30 p-5 hover:border-[#0067b8] transition-colors duration-150"
                       >
                         {/* Icon + title */}
                         <div className="flex items-start gap-3 mb-3">

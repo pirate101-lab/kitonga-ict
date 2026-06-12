@@ -13,7 +13,7 @@ export function FinalCTA() {
   const fastOrderHref = buildWhatsAppUrl(DEFAULT_FAST_ORDER_MESSAGE);
 
   return (
-    <section className="py-8 md:py-10 border-t border-black bg-white" id="cta">
+    <section className="py-8 md:py-10 border-t border-black/30 bg-white" id="cta">
       <div className="container-narrow">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
 
@@ -39,7 +39,7 @@ export function FinalCTA() {
             </WhatsAppButton>
             <Link
               href="/order"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border-2 border-black bg-white text-[13px] font-medium text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border-2 border-black/30 bg-white text-[13px] font-medium text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
             >
               Order form
             </Link>

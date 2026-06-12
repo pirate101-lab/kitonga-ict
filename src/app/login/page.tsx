@@ -82,7 +82,7 @@ function LoginForm() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border-2 border-black p-6">
+        <div className="bg-white rounded-2xl border-2 border-black/30 p-6">
           <h1 className="text-[18px] font-bold text-[#0a0a0a] mb-1">Sign in</h1>
           <p className="text-[13px] text-[#444] mb-5">
             Continue with your phone number and password.
@@ -113,7 +113,7 @@ function LoginForm() {
                 aria-label="Password"
                 placeholder="Your password"
                 autoComplete="current-password"
-                className="w-full rounded-xl border-[1.5px] border-black bg-white px-3.5 py-3 text-[14px] text-[#0a0a0a] outline-none transition-colors placeholder:text-[#888] focus:border-[#0067b8] focus:ring-2 focus:ring-[#0067b8]/20"
+                className="w-full rounded-xl border-[1.5px] border-black/30 bg-white px-3.5 py-3 text-[14px] text-[#0a0a0a] outline-none transition-colors placeholder:text-[#888] focus:border-[#0067b8] focus:ring-2 focus:ring-[#0067b8]/20"
               />
             </div>
 

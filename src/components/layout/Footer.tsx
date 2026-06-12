@@ -99,7 +99,7 @@ function SocialLink({ href, label, children }: { href: string; label: string; ch
       target="_blank"
       rel="noopener noreferrer"
       aria-label={label}
-      className="grid h-8 w-8 place-items-center rounded-lg border-2 border-black text-[#333] hover:text-[#0067b8] hover:border-[#0067b8] transition-colors"
+      className="grid h-8 w-8 place-items-center rounded-lg border-2 border-black/30 text-[#333] hover:text-[#0067b8] hover:border-[#0067b8] transition-colors"
     >
       {children}
     </a>

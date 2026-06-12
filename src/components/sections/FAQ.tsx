@@ -36,7 +36,7 @@ export function FAQ() {
  const [open, setOpen] = useState<number | null>(0);
 
  return (
- <section className="relative py-12 md:py-16 bg-white border-t border-black" id="faq">
+ <section className="relative py-12 md:py-16 bg-white border-t border-black/30" id="faq">
  <div className="container-narrow">
  <Reveal>
  <div className="mb-8">
