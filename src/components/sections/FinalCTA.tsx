@@ -39,7 +39,7 @@ export function FinalCTA() {
             </WhatsAppButton>
             <Link
               href="/order"
-              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border border-black bg-white text-[13px] font-medium text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
+              className="inline-flex items-center justify-center px-4 py-2.5 rounded-lg border-2 border-black bg-white text-[13px] font-medium text-[#111] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
             >
               Order form
             </Link>

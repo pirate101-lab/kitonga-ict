@@ -82,7 +82,7 @@ function LoginForm() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-black p-6">
+        <div className="bg-white rounded-2xl border-2 border-black p-6">
           <h1 className="text-[18px] font-bold text-[#0a0a0a] mb-1">Sign in</h1>
           <p className="text-[13px] text-[#444] mb-5">
             Continue with your phone number and password.

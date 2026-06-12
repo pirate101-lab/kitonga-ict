@@ -75,7 +75,7 @@ export default function SignupPage() {
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-2xl border border-black p-6">
+        <div className="bg-white rounded-2xl border-2 border-black p-6">
           <h1 className="text-[18px] font-bold text-[#0a0a0a] mb-1">Create account</h1>
           <p className="text-[13px] text-[#333] mb-5">
             Phone number + password. No card required.
@@ -106,7 +106,7 @@ export default function SignupPage() {
                 aria-label="Password"
                 placeholder="Min. 6 characters"
                 autoComplete="new-password"
-                className="w-full rounded-xl border border-black bg-white px-3.5 py-3 text-[14px] text-[#0a0a0a] outline-none transition-colors placeholder:text-[#888] focus:border-[#0067b8] focus:ring-2 focus:ring-[#0067b8]/20"
+                className="w-full rounded-xl border-2 border-black bg-white px-3.5 py-3 text-[14px] text-[#0a0a0a] outline-none transition-colors placeholder:text-[#888] focus:border-[#0067b8] focus:ring-2 focus:ring-[#0067b8]/20"
               />
             </div>
 

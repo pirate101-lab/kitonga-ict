@@ -125,7 +125,7 @@ export function Portfolio({ limit }: { limit?: number }) {
             {Array.from({ length: limit ?? 6 }).map((_, i) => (
               <div
                 key={i}
-                className="aspect-[4/3] rounded-2xl border border-black bg-white animate-pulse"
+                className="aspect-[4/3] rounded-2xl border-2 border-black bg-white animate-pulse"
               />
             ))}
           </div>
@@ -151,7 +151,7 @@ export function Portfolio({ limit }: { limit?: number }) {
             {filtered.map((item) => (
               <article
                 key={item.id}
-                className="group relative flex flex-col overflow-hidden rounded-2xl border border-black bg-white hover:border-[#0067b8]/25 transition-colors"
+                className="group relative flex flex-col overflow-hidden rounded-2xl border-2 border-black bg-white hover:border-[#0067b8] transition-colors"
               >
                 {/* Image / mockup */}
                 <div className="relative aspect-[4/3] w-full overflow-hidden rounded-t-2xl">
@@ -189,7 +189,7 @@ export function Portfolio({ limit }: { limit?: number }) {
                       {item.client} · {item.year}
                     </p>
                   </div>
-                  <span className="shrink-0 rounded-full border border-black bg-[#f2f5f9] px-2.5 py-0.5 text-[10.5px] font-medium text-[#333] uppercase tracking-wide">
+                  <span className="shrink-0 rounded-full border-2 border-black bg-[#f2f5f9] px-2.5 py-0.5 text-[10.5px] font-medium text-[#333] uppercase tracking-wide">
                     {item.category}
                   </span>
                 </div>

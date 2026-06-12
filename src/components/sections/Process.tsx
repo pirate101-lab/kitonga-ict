@@ -45,12 +45,12 @@ export function Process() {
         </Reveal>
 
         <Reveal y={10} delay={80}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 divide-y sm:divide-y-0 divide-[#cbd5e1] border border-black rounded-2xl overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-0 divide-y sm:divide-y-0 divide-[#cbd5e1] border-2 border-black rounded-2xl overflow-hidden">
             {STEPS.map((step) => (
               <div key={step.n} className="flex flex-col gap-2 p-5 bg-white hover:bg-[#f7f9fc] transition-colors">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-[11px] font-mono font-bold text-[#0067b8]">{step.n}</span>
-                  <span className="text-[10.5px] font-medium text-[#444] border border-black rounded-full px-2 py-0.5">
+                  <span className="text-[10.5px] font-medium text-[#444] border-2 border-black rounded-full px-2 py-0.5">
                     {step.duration}
                   </span>
                 </div>
