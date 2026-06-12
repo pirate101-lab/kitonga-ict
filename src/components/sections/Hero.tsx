@@ -22,9 +22,9 @@ export function Hero() {
 
           {/* Left: text */}
           <div className="pb-6 lg:pb-0">
-            <h1 className="text-[2.75rem] leading-[1.05] sm:text-5xl lg:text-8xl font-bold text-[#0a0a0a] tracking-tight mb-5">
-              Design work<br />
-              <span className="text-[#0067b8]">done right.</span>
+            <h1 className="text-[2.75rem] leading-[1.05] lg:text-[2.75rem] font-bold text-[#0a0a0a] tracking-tight mb-5">
+              Design work<br className="lg:hidden" />
+              {" "}<span className="text-[#0067b8]">done right.</span>
             </h1>
             <p className="text-[15px] text-[#333] leading-relaxed max-w-md mb-8">
               Flyers, CVs, business cards, photo editing, and cyber services. Brief us on WhatsApp — reply within the hour, delivery same day.
