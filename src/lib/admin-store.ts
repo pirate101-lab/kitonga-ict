@@ -45,7 +45,7 @@ const TOKEN_BYTES = 32;
 const TOKEN_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 const ID_BYTES = 8;
 
-export const MIN_PASSWORD_LENGTH = 8;
+export const MIN_PASSWORD_LENGTH = 4;
 export const MIN_USERNAME_LENGTH = 3;
 export const MAX_USERNAME_LENGTH = 32;
 export const USERNAME_PATTERN = /^[a-z0-9_-]+$/;

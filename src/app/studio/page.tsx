@@ -115,7 +115,7 @@ function StudioLoginForm() {
   }
 
   const inputWrapClass =
-    "flex items-stretch rounded-xl border border-card-border bg-card transition-colors focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30";
+    "flex items-stretch rounded-xl border border-card-border bg-card transition-colors";
   const iconWrapClass =
     "select-none flex items-center px-3 text-muted-foreground border-r border-card-border bg-secondary rounded-l-xl";
   const inputClass =
@@ -138,18 +138,16 @@ function StudioLoginForm() {
       <div className="container-narrow grid place-items-center">
         <div className="rounded-2xl border border-card-border bg-card p-6 md:p-8 max-w-md w-full">
           <div className="flex items-center justify-between">
-            <Logo />
-            <span className="rounded-full border border-card-border bg-secondary px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
-              Studio
-            </span>
+            <div className="scale-[0.4] origin-left whitespace-nowrap">
+              <Logo />
+            </div>
           </div>
 
           <h1 className="font-display text-xl font-bold text-foreground mt-5">
             Studio admin
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Sign in with your studio username and password to manage briefs,
-            sliders, the media library and your team.
+            Sign in to manage your studio.
           </p>
 
           <form onSubmit={onSubmit} className="mt-5 flex flex-col gap-3.5">
