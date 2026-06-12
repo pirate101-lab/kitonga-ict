@@ -149,19 +149,22 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-background pb-16">
 
       {/* ── Mobile sticky header (hidden on lg+) ── */}
-      <header className="lg:hidden sticky top-0 z-50 flex items-center justify-between px-4 py-3 bg-card border-b border-card-border">
-        <Logo withWordmark={false} />
-        <span className="font-mono text-xs font-bold uppercase tracking-widest text-muted-foreground">
-          Admin Studio
-        </span>
+      <header className="lg:hidden sticky top-0 z-50 flex items-center justify-between px-3 py-1.5 bg-card border-b border-card-border">
+        {/* Logo + wordmark inline */}
+        <div className="flex items-center gap-1.5">
+          <Logo withWordmark={false} />
+          <span className="font-display text-[11px] font-bold tracking-tight text-foreground">
+            Admin Studio
+          </span>
+        </div>
         <button
           type="button"
           aria-label={mobileNavOpen ? "Close menu" : "Open menu"}
           aria-expanded={mobileNavOpen}
           onClick={() => setMobileNavOpen((v) => !v)}
-          className="grid h-9 w-9 place-items-center rounded-xl border border-card-border text-foreground hover:text-primary hover:border-primary/40 transition-colors"
+          className="grid h-7 w-7 place-items-center rounded-lg border border-card-border text-foreground hover:text-primary hover:border-primary/40 transition-colors"
         >
-          {mobileNavOpen ? <X size={16} aria-hidden /> : <Menu size={16} aria-hidden />}
+          {mobileNavOpen ? <X size={14} aria-hidden /> : <Menu size={14} aria-hidden />}
         </button>
       </header>
 
@@ -174,20 +177,9 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             aria-hidden
             onClick={() => setMobileNavOpen(false)}
           />
-          {/* Panel */}
-          <div className="lg:hidden fixed inset-x-0 top-[53px] z-40 bg-card border-b border-card-border shadow-md px-4 py-3">
-            {me && (
-              <div className="flex items-center gap-2.5 rounded-xl border border-card-border bg-secondary px-3 py-2 mb-3">
-                <div className="grid h-7 w-7 place-items-center rounded-full bg-primary text-primary-foreground">
-                  <ShieldCheck size={12} aria-hidden />
-                </div>
-                <div className="min-w-0">
-                  <div className="truncate text-sm font-semibold text-foreground">{me.username}</div>
-                  <div className="text-[10px] font-mono uppercase tracking-[0.16em] text-primary">{me.role}</div>
-                </div>
-              </div>
-            )}
-            <nav className="flex flex-col gap-1" aria-label="Admin mobile">
+          {/* Panel — right-anchored, max half screen width */}
+          <div className="lg:hidden fixed right-0 top-[45px] z-40 w-[52vw] max-w-[240px] min-w-[180px] bg-card border-l border-b border-card-border shadow-lg rounded-bl-2xl px-2 py-2">
+            <nav className="flex flex-col gap-0.5" aria-label="Admin mobile">
               {visibleNav.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.exact
@@ -199,13 +191,13 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
                     href={item.href}
                     onClick={() => setMobileNavOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors border",
+                      "flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[12px] font-medium transition-colors",
                       isActive
-                        ? "bg-secondary text-primary border-primary/30"
-                        : "text-muted-foreground hover:text-primary hover:bg-secondary border-transparent",
+                        ? "bg-secondary text-primary"
+                        : "text-muted-foreground hover:text-primary hover:bg-secondary",
                     )}
                   >
-                    <Icon size={16} aria-hidden />
+                    <Icon size={13} aria-hidden />
                     {item.label}
                   </Link>
                 );
@@ -214,10 +206,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             <button
               type="button"
               onClick={onSignOut}
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-card-border bg-card px-3 py-2.5 text-sm font-semibold text-foreground transition-colors hover:border-destructive hover:text-destructive"
+              className="mt-1 flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-[12px] font-medium text-muted-foreground transition-colors hover:text-destructive hover:bg-red-50"
             >
-              <LogOut size={14} aria-hidden />
-              Sign out of studio
+              <LogOut size={13} aria-hidden />
+              Sign out
             </button>
           </div>
         </>
