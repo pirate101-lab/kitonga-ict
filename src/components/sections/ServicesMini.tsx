@@ -12,7 +12,7 @@ export function ServicesMini() {
   const featured = SERVICES.slice(0, 6);
 
   return (
-    <section className="relative pt-3 pb-10 md:py-14 bg-background" id="services-mini">
+    <section className="relative py-10 md:py-14 bg-background" id="services-mini">
       <div className="container-narrow">
         <Reveal>
           <SectionHeading
