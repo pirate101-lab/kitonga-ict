@@ -48,7 +48,6 @@ const NAV: NavItem[] = [
   { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
   { href: "/admin/services", label: "Services & pricing", icon: Box },
   { href: "/admin/before-after", label: "Before / after", icon: Sparkles },
-  { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquare },
   { href: "/admin/orders", label: "Orders inbox", icon: Package },
   { href: "/admin/clients", label: "Clients", icon: Users },
   { href: "/admin/team", label: "Team", icon: UserCog, ownerOnly: true },
@@ -144,7 +143,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background pt-10 pb-16">
       <div className="container-narrow grid gap-8 lg:grid-cols-[260px_1fr]">
-        <aside className="lg:sticky lg:top-24 lg:h-[calc(100vh-8rem)]">
+        <aside className="lg:sticky lg:top-10 lg:max-h-[calc(100vh-4rem)] overflow-y-auto">
           <div className="rounded-2xl border border-card-border bg-card p-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">

@@ -264,13 +264,7 @@ export default function WhatsAppAdminPage() {
           </div>
         )}
 
-        <div className="mt-4 rounded-xl border border-border bg-background-elev p-3">
-          <p className="text-xs font-mono text-foreground-muted">
-            <strong className="text-foreground">Command reference (send with image):</strong><br />
-            <span className="text-primary">/portfolio Posters &quot;Title&quot;</span> · <span className="text-primary">/photoshop &quot;Title&quot;</span> · <span className="text-primary">/flyer &quot;Title&quot;</span><br />
-            <span className="text-primary">/cv &quot;Title&quot;</span> · <span className="text-primary">/cards &quot;Title&quot;</span> · <span className="text-primary">!status</span> (text only)
-          </p>
-        </div>
+
       </AdminCard>
 
       {/* ── Bot config ── */}

@@ -20,14 +20,12 @@
 
   --card: 0 0% 100%;                  /* pristine white cards */
   --card-foreground: 220 20% 7%;
-  --card-border: 215 20% 83%;         /* slate-300 — crisp, always visible */
-
+  --card-border: 215 16% 65%;
   --popover: 0 0% 100%;
   --popover-foreground: 220 20% 7%;
-  --popover-border: 215 20% 83%;
-
-  --border: 215 20% 83%;              /* slate-300 — #cbd5e1 */
-  --border-strong: 215 16% 65%;       /* slate-400 — #94a3b8 */
+  --popover-border: 215 16% 65%;
+  --border: 215 16% 65%;
+  --border-strong: 215 16% 65%;
   --input: 215 20% 83%;
   --ring: 210 100% 36%;               /* #0067b8 focus ring */
 

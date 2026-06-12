@@ -153,6 +153,29 @@ async function handleMessage(message) {
     return;
   }
 
+  if (parsed.cmd === 'menu') {
+    await message.reply(
+      `🛠️  *Kitonga-ICT Bot Menu*\n\n` +
+      `*Control Commands:*\n` +
+      `• !status - View bot & portfolio status\n` +
+      `• !ping - Check if bot is responsive\n` +
+      `• !menu - Show this menu\n\n` +
+      `*Upload Commands (Send with image):*\n` +
+      `• /photoshop [title] - Photo Compositing\n` +
+      `• /flyer [title] - Posters & Flyers\n` +
+      `• /cv [title] - Resumes & CVs\n` +
+      `• /cards [title] - Business Cards\n` +
+      `• /logo [title] - Logo Design\n` +
+      `• /web [title] - Web Design`
+    );
+    return;
+  }
+
+  if (parsed.cmd === 'ping') {
+    await message.reply('🏓 Pong! Bot is fully operational.');
+    return;
+  }
+
   // ── Media upload commands — require an attached image ───────────────
   if (!hasMedia) {
     await message.reply('⚠️  Please send an image with the caption command.');

@@ -8,6 +8,8 @@ const CATEGORY_MAP = {
   '/flyer':     'Posters & Flyers',
   '/cv':        'Resumes & CVs',
   '/cards':     'Business Cards',
+  '/logo':      'Logo Design',
+  '/web':       'Web Design',
 };
 
 /**
@@ -36,15 +38,8 @@ export function parseCaption(caption) {
   const verb = (firstSpace === -1 ? trimmed : trimmed.slice(0, firstSpace)).toLowerCase();
   const rest  = firstSpace === -1 ? '' : trimmed.slice(firstSpace + 1).trim();
 
-  if (verb === '/portfolio') {
-    // /portfolio [category] [title]
-    // Category is the first word (or quoted phrase), title is the remainder.
-    const { first, remainder } = splitFirst(rest);
-    if (!first) return null;
-    const title = remainder || first;
-    const category = remainder ? first : 'General';
-    return { cmd: 'portfolio', category, title };
-  }
+  if (/^!menu$/i.test(verb)) return { cmd: 'menu' };
+  if (/^!ping$/i.test(verb)) return { cmd: 'ping' };
 
   const mappedCategory = CATEGORY_MAP[verb];
   if (mappedCategory) {
