@@ -54,8 +54,8 @@ export default function Home() {
         <Testimonials />
       </div>
 
-      {/* 8 desktop / 5 mobile · FinalCTA — always last */}
-      <div className="order-5 lg:order-none">
+      {/* 8 desktop / 5 mobile · FinalCTA — hidden on mobile, always last on desktop */}
+      <div className="hidden lg:block lg:order-none">
         <FinalCTA />
       </div>
     </div>

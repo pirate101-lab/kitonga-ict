@@ -1,28 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
-import { SITE, buildWhatsAppUrl } from "@/lib/site";
+import { SITE } from "@/lib/site";
 import { readSiteSettings } from "@/lib/site-settings-db";
 
 /**
- * Footer — single py-2.5 horizontal row.
- * Logo · wordmark · social icons · email · copyright.
+ * Footer — single slim row.
+ * Left: logo + name + copyright  |  Right: WhatsApp + TikTok icons
  * Total height ≈ 44px.
  */
 export async function Footer() {
   const settings = await readSiteSettings();
   const year = new Date().getFullYear();
 
-  const whatsappHref = buildWhatsAppUrl(
-    `Hello KITONGA-ICT! 👋\n\nI'd like to get in touch. — Sent from kitongaict.tech`,
-  );
-
   return (
     <footer id="contact" className="border-t border-card-border bg-card py-2.5">
       <div className="container-narrow">
-        <div className="footer-row flex flex-row flex-wrap items-center justify-between gap-x-4 gap-y-1">
+        <div className="flex flex-row items-center justify-between gap-x-4">
 
-          {/* Left: logo + wordmark */}
-          <Link href="/" aria-label="KITONGA-ICT home" className="flex items-center gap-2 shrink-0">
+          {/* Left: logo + name + copyright */}
+          <Link href="/" aria-label="KITONGA-ICT home" className="flex items-center gap-2 shrink-0 min-w-0">
             <Image
               src="/brand/logo-round.png"
               alt=""
@@ -30,36 +26,33 @@ export async function Footer() {
               height={32}
               quality={60}
               sizes="32px"
-              className="rounded-full object-cover"
+              className="rounded-full object-cover shrink-0"
               style={{ width: 32, height: 32 }}
             />
-            <span className="hidden sm:inline text-[11px] font-black uppercase tracking-wide text-foreground">
-              {SITE.name}
+            <div className="min-w-0 hidden sm:block">
+              <span className="block text-[11px] font-black uppercase tracking-wide text-foreground leading-none">
+                {SITE.name}
+              </span>
+              <span className="block text-[10px] text-muted-foreground leading-none mt-0.5">
+                © {year} · Nairobi
+              </span>
+            </div>
+            {/* Mobile: show copyright inline next to logo */}
+            <span className="sm:hidden text-[10px] font-semibold text-muted-foreground whitespace-nowrap">
+              © {year} KITONGA-ICT
             </span>
           </Link>
 
-          {/* Center: social icons + email */}
-          <div className="flex items-center gap-1.5">
+          {/* Right: social icon buttons */}
+          <div className="flex items-center gap-2 shrink-0">
             <SocialLink href={settings.social.whatsapp} label="WhatsApp">
               <WhatsAppIcon />
             </SocialLink>
             <SocialLink href={settings.social.tiktok} label="TikTok">
               <TikTokIcon />
             </SocialLink>
-            <a
-              href={whatsappHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center px-2.5 py-1 rounded-lg border border-card-border text-[11px] font-medium text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors ml-1"
-            >
-              {SITE.contactEmail}
-            </a>
           </div>
 
-          {/* Right: copyright */}
-          <span className="text-[11px] font-bold text-muted-foreground whitespace-nowrap">
-            © {year} KITONGA-ICT · Nairobi
-          </span>
         </div>
       </div>
     </footer>

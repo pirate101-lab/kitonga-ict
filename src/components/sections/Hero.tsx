@@ -18,7 +18,7 @@ export function Hero() {
   return (
     <section className="bg-[#f2f5f9]">
       <div className="container-narrow">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 py-14 md:py-20 lg:items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 pt-14 pb-6 md:py-20 lg:items-center">
 
           {/* Left: text */}
           <div className="pb-6 lg:pb-0">
