@@ -3,7 +3,7 @@ import { findAdminByToken } from '@/lib/admin-store';
 import { promises as fs } from 'node:fs';
 import path from 'node:path';
 
-const ENV_FILE = path.join(process.cwd(), '.env');
+const ENV_FILE = path.join(process.cwd(), '.env.local');
 
 export async function PATCH(req: NextRequest) {
   const token = req.headers.get('authorization')?.replace('Bearer ', '') ?? '';

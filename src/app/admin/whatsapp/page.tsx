@@ -197,22 +197,22 @@ export default function WhatsAppAdminPage() {
       }
     >
       {/* ── Live status card ── */}
-      <AdminCard>
+      <AdminCard className="!p-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-display text-lg font-semibold text-foreground">Bot status</h2>
-          <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.18em] ${
+           <h2 className="font-display text-[15px] font-semibold text-foreground">Bot status</h2>
+           <span
+            className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] ${
               isOnline
                 ? "bg-[hsl(142_70%_49%/0.15)] text-[hsl(142_70%_36%)] border border-[hsl(142_70%_49%/0.3)]"
                 : "bg-[hsl(0_84%_60%/0.1)] text-destructive border border-[hsl(0_84%_60%/0.25)]"
             }`}
           >
-            {isOnline ? <Wifi size={12} aria-hidden /> : <WifiOff size={12} aria-hidden />}
+            {isOnline ? <Wifi size={10} aria-hidden /> : <WifiOff size={10} aria-hidden />}
             {botStatus.status}
           </span>
         </div>
 
-        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <Stat label="Linked number" value={botStatus.linkedNumber ?? "—"} />
           <Stat label="Display name" value={botStatus.displayName ?? "—"} />
           <Stat label="Portfolio items" value={String(botStatus.portfolioCount)} />
@@ -220,7 +220,7 @@ export default function WhatsAppAdminPage() {
         </div>
 
         {botStatus.lastUpload && (
-          <p className="mt-3 text-xs text-foreground-muted">
+          <p className="mt-2 text-[11px] text-foreground-muted">
             Last upload: <span className="font-semibold text-foreground">{botStatus.lastUpload}</span>
           </p>
         )}

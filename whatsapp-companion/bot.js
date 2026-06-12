@@ -250,8 +250,23 @@ async function ensureEnvKeys(envFile, keys) {
   if (lines.length > 0) {
     const addition = `\n# WhatsApp Companion Bot\n${lines.join('\n')}\n`;
     await fs.appendFile(envFile, addition, 'utf8');
-    console.log(`📝  Added missing .env keys: ${lines.map(l => l.split('=')[0]).join(', ')}`);
   }
 }
+
+// Watch .env.local and auto-restart on changes
+import { statSync } from 'node:fs';
+const envPath = path.resolve(__dirname, '..', '.env.local');
+let lastMtime = 0;
+try { lastMtime = statSync(envPath).mtimeMs; } catch {}
+
+setInterval(() => {
+  try {
+    const currentMtime = statSync(envPath).mtimeMs;
+    if (lastMtime && currentMtime > lastMtime) {
+      console.log(`\n🔄 .env.local changed. Auto-restarting...`);
+      process.exit(0);
+    }
+  } catch {}
+}, 2000);
 
 client.initialize();
