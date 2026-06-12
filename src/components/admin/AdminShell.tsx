@@ -152,7 +152,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <header className="lg:hidden sticky top-0 z-50 flex items-center justify-between px-3 py-1.5 bg-card border-b border-card-border">
         {/* Logo + wordmark inline */}
         <div className="flex items-center gap-1.5">
-          <Logo withWordmark={false} />
+          <Logo withWordmark={false} size="sm" />
           <span className="font-display text-[11px] font-bold tracking-tight text-foreground">
             Admin Studio
           </span>
@@ -177,8 +177,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             aria-hidden
             onClick={() => setMobileNavOpen(false)}
           />
-          {/* Panel — right-anchored, max half screen width */}
-          <div className="lg:hidden fixed right-0 top-[45px] z-40 w-[52vw] max-w-[240px] min-w-[180px] bg-card border-l border-b border-card-border shadow-lg rounded-bl-2xl px-2 py-2">
+          {/* Panel — right-anchored, max half screen width, sits below header with gap */}
+          <div className="lg:hidden fixed right-0 top-[45px] mt-1 z-40 w-[52vw] max-w-[240px] min-w-[180px] bg-card border border-card-border shadow-lg rounded-bl-2xl rounded-tl-2xl px-2 py-2">
             <nav className="flex flex-col gap-0.5" aria-label="Admin mobile">
               {visibleNav.map((item) => {
                 const Icon = item.icon;

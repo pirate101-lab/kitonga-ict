@@ -39,8 +39,8 @@ const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcodeTerminal = require('qrcode-terminal');
 
 import { initCloudinary, uploadBase64ToCloudinary } from './uploader.js';
-import { appendPortfolioItem, getPortfolioCount }  from './portfolio.js';
-import { parseCaption }                             from './commands.js';
+import { appendPortfolioItem, getPortfolioCount, readPortfolio } from './portfolio.js';
+import { parseCaption, getMenuText }                             from './commands.js';
 
 initCloudinary();
 
@@ -199,77 +199,120 @@ async function handleMessage(message) {
   if (!ALLOWED.has(number)) return;
 
   const hasMedia = message.hasMedia;
-  const caption  = hasMedia ? (message.body ?? '') : message.body;
-  const parsed   = parseCaption(caption);
+  const body     = (hasMedia ? (message.body ?? '') : message.body) ?? '';
+  const parsed   = parseCaption(body);
+
+  // Unknown command or plain text — silently ignore
   if (!parsed) return;
 
-  // !status
+  // ── !menu / !help ─────────────────────────────────────────────────────────
+  if (parsed.cmd === 'menu') {
+    const count = await getPortfolioCount();
+    await message.reply(getMenuText(count));
+    return;
+  }
+
+  // ── !ping ─────────────────────────────────────────────────────────────────
+  if (parsed.cmd === 'ping') {
+    await message.reply('🏓  Pong! Bot is online.');
+    return;
+  }
+
+  // ── !status ───────────────────────────────────────────────────────────────
   if (parsed.cmd === 'status') {
     const count = await getPortfolioCount();
     await message.reply(
-      `📊  *Kitonga-ICT Bot Status*\n\n` +
-      `• Portfolio entries: ${count}\n` +
+      `📊  *Bot Status*\n\n` +
+      `• Portfolio items: *${count}*\n` +
       `• Cloudinary folder: kitonga_assets\n` +
-      `• Bot status: ✅ Online\n` +
-      `• Allowed: ${[...ALLOWED].join(', ')}\n\n` +
-      `*Commands:*\n` +
-      `/portfolio [cat] [title] — upload to custom category\n` +
-      `/photoshop [title] — Photo Compositing\n` +
-      `/flyer [title] — Posters & Flyers\n` +
-      `/cv [title] — Resumes & CVs\n` +
-      `/cards [title] — Business Cards\n` +
-      `!status — show this menu`
+      `• Allowed numbers: ${[...ALLOWED].join(', ')}\n` +
+      `• Status: ✅ Online\n\n` +
+      `_Type_ \`!menu\` _for all commands_`
     );
     return;
   }
 
-  if (!hasMedia) {
-    await message.reply('⚠️  Please send an image with the caption command.\n\nAvailable commands:\n/photoshop [title]\n/flyer [title]\n/cv [title]\n/cards [title]\n/portfolio [category] [title]\n!status — full menu');
+  // ── !categories ───────────────────────────────────────────────────────────
+  if (parsed.cmd === 'categories') {
+    try {
+      const items = await readPortfolio();
+      const cats = [...new Set(items.map(i => i.category).filter(Boolean))].sort();
+      if (cats.length === 0) {
+        await message.reply('📂  No categories yet — portfolio is empty.\n\nType `!menu` to see upload commands.');
+      } else {
+        const list = cats.map((c, i) => `  ${i + 1}. ${c}`).join('\n');
+        await message.reply(
+          `📂  *Current Portfolio Categories* (${cats.length})\n\n${list}\n\n` +
+          `_Upload to any category using:_\n` +
+          `\`/portfolio [category] [title]\`\n` +
+          `or a shortcut like \`/flyer [title]\``
+        );
+      }
+    } catch (err) {
+      console.error('Categories error:', err);
+      await message.reply('❌  Could not read categories. Check bot logs.');
+    }
     return;
   }
 
-  await message.reply('⏳  Uploading to Cloudinary...');
+  // ── Upload commands (require media) ───────────────────────────────────────
+  if (parsed.cmd === 'upload') {
+    if (!hasMedia) {
+      await message.reply(
+        `⚠️  Send an image with that caption to upload.\n\n` +
+        `Category will be: *${parsed.category}*\n` +
+        `Title: *${parsed.title}*\n\n` +
+        `_Type_ \`!categories\` _to see existing categories_\n` +
+        `_Type_ \`!menu\` _for all commands_`
+      );
+      return;
+    }
 
-  const media = await message.downloadMedia();
-  if (!media?.data) {
-    await message.reply('❌  Could not download media. Please try again.');
+    await message.reply(`⏳  Uploading *${parsed.title}* → ${parsed.category}...`);
+
+    const media = await message.downloadMedia();
+    if (!media?.data) {
+      await message.reply('❌  Could not download media. Please try again.');
+      return;
+    }
+
+    let uploadResult;
+    try {
+      uploadResult = await uploadBase64ToCloudinary(media.data, 'kitonga_assets', [parsed.category, 'bot-upload']);
+    } catch (uploadErr) {
+      console.error('Cloudinary upload error:', uploadErr);
+      await message.reply('❌  Cloudinary upload failed. Check bot logs.');
+      return;
+    }
+
+    let record;
+    try {
+      record = await appendPortfolioItem({
+        title:    parsed.title,
+        category: parsed.category,
+        imageUrl: uploadResult.secure_url,
+        publicId: uploadResult.public_id,
+        tags:     [parsed.category, 'bot-upload'],
+      });
+    } catch (writeErr) {
+      console.error('Portfolio write error:', writeErr);
+      await message.reply(`✅  Uploaded but portfolio write failed.\nURL: ${uploadResult.secure_url}`);
+      return;
+    }
+
+    const count = await getPortfolioCount();
+    await writeStatus({ lastUpload: record.title, portfolioCount: count, lastSeen: new Date().toISOString() });
+
+    await message.reply(
+      `✅  *Uploaded!*\n\n` +
+      `• Title: ${record.title}\n` +
+      `• Category: ${record.category}\n` +
+      `• ID: ${record.id}\n` +
+      `• Total portfolio: ${count} items\n` +
+      `• URL: ${uploadResult.secure_url}`
+    );
     return;
   }
-
-  let uploadResult;
-  try {
-    uploadResult = await uploadBase64ToCloudinary(media.data, 'kitonga_assets', [parsed.category, 'bot-upload']);
-  } catch (uploadErr) {
-    console.error('Cloudinary upload error:', uploadErr);
-    await message.reply('❌  Cloudinary upload failed. Check bot logs.');
-    return;
-  }
-
-  let record;
-  try {
-    record = await appendPortfolioItem({
-      title:    parsed.title,
-      category: parsed.category,
-      imageUrl: uploadResult.secure_url,
-      publicId: uploadResult.public_id,
-      tags:     [parsed.category, 'bot-upload'],
-    });
-  } catch (writeErr) {
-    console.error('Portfolio write error:', writeErr);
-    await message.reply(`✅  Uploaded to Cloudinary but portfolio write failed.\nURL: ${uploadResult.secure_url}`);
-    return;
-  }
-
-  const count = await getPortfolioCount();
-  await writeStatus({ lastUpload: record.title, portfolioCount: count, lastSeen: new Date().toISOString() });
-
-  await message.reply(
-    `✅  *Done!*\n\n` +
-    `• Title: ${record.title}\n` +
-    `• Category: ${record.category}\n` +
-    `• ID: ${record.id}\n` +
-    `• URL: ${uploadResult.secure_url}`
-  );
 }
 
 // ── File helpers ──────────────────────────────────────────────────────────────
