@@ -15,7 +15,7 @@ import {
   Settings as SettingsIcon,
   ShieldCheck,
   Sparkles,
-  Sliders,
+  // Sliders removed
   UserCog,
   Users,
   Cloud,

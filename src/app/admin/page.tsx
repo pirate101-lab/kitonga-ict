@@ -5,17 +5,13 @@ import { useEffect, useMemo, useState } from "react";
 import {
   ArrowUpRight,
   Box,
-  ExternalLink,
   Image as ImageIcon,
   LayoutDashboard,
   MessageCircle,
   Package,
   Settings,
-  Sliders,
   Users,
   Layers,
-  FileImage,
-  Globe,
   RefreshCw,
 } from "lucide-react";
 import { AdminCard, AdminPage } from "@/components/admin/AdminPage";
