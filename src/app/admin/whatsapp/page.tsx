@@ -31,12 +31,11 @@ type BotStatus = {
   pairingCodeAt: string | null;
   portfolioCount: number;
   lastUpload?: string;
+  disconnectedAt?: string;
 };
 
 type EnvConfig = {
   COMPANION_ALLOWED_NUMBERS: string;
-  CLOUDINARY_CLOUD_NAME: string;
-  CLOUDINARY_API_KEY: string;
   COMPANION_DATA_DIR: string;
 };
 
@@ -63,6 +62,7 @@ export default function WhatsAppAdminPage() {
   const [resetConfirm, setResetConfirm] = useState(false);
   const [saved, setSaved]         = useState(false);
   const [error, setError]         = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const fetchStatus = useCallback(async () => {
@@ -84,6 +84,7 @@ export default function WhatsAppAdminPage() {
           pairingCodeAt: d.pairingCodeAt ?? null,
           portfolioCount: d.portfolioCount ?? 0,
           lastUpload: d.lastUpload,
+          disconnectedAt: d.disconnectedAt,
         });
       }
     } catch { /* silently ignore poll errors */ }
@@ -118,18 +119,23 @@ export default function WhatsAppAdminPage() {
     } catch {}
   }, []);
 
+  const refreshAll = useCallback(async () => {
+    setRefreshing(true);
+    await Promise.all([fetchStatus(), fetchQr(), fetchEnv()]);
+    setRefreshing(false);
+  }, [fetchStatus, fetchQr, fetchEnv]);
+
   useEffect(() => {
-    fetchStatus();
-    fetchQr();
-    fetchEnv();
+    refreshAll();
+    // Poll every 4s for fast status updates
     pollRef.current = setInterval(() => {
       fetchStatus();
       fetchQr();
-    }, 8_000);
+    }, 4_000);
     return () => {
       if (pollRef.current) clearInterval(pollRef.current);
     };
-  }, [fetchStatus, fetchQr, fetchEnv]);
+  }, [refreshAll, fetchStatus, fetchQr]);
 
   async function requestPairingCode() {
     if (!pairPhone.trim()) { setPairMsg("Enter a phone number first."); return; }
@@ -144,8 +150,7 @@ export default function WhatsAppAdminPage() {
       });
       const d = await res.json();
       if (res.ok) {
-        setPairMsg(d.message ?? "Request queued — code will appear below in a few seconds.");
-        // Poll quickly to pick up the new code
+        setPairMsg("Code requested — check below in a few seconds.");
         setTimeout(fetchStatus, 3000);
         setTimeout(fetchStatus, 6000);
         setTimeout(fetchStatus, 10000);
@@ -168,7 +173,6 @@ export default function WhatsAppAdminPage() {
         COMPANION_ALLOWED_NUMBERS: envConfig.COMPANION_ALLOWED_NUMBERS ?? "",
       };
       if (envConfig.COMPANION_DATA_DIR) payload.COMPANION_DATA_DIR = envConfig.COMPANION_DATA_DIR;
-
       const res = await fetch("/api/admin/whatsapp/env", {
         method: "PATCH",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -209,7 +213,7 @@ export default function WhatsAppAdminPage() {
         setResetConfirm(false);
         setBotStatus(EMPTY_STATUS);
         setQrDataUrl(null);
-        fetchStatus();
+        setTimeout(fetchStatus, 1000);
       }
     } catch (e) {
       setError(String(e));
@@ -218,66 +222,64 @@ export default function WhatsAppAdminPage() {
     }
   }
 
-  const isOnline      = botStatus.status === "online";
-  const isPairing     = botStatus.status === "pairing" || botStatus.status === "awaiting-pairing";
-  const isNotLinked   = !isOnline;
+  const isOnline    = botStatus.status === "online";
+  const isNotLinked = !isOnline;
 
   const statusColor = isOnline
-    ? "bg-[hsl(142_70%_49%/0.15)] text-[hsl(142_70%_36%)] border-[hsl(142_70%_49%/0.3)]"
-    : isPairing
-      ? "bg-[hsl(38_92%_50%/0.12)] text-[hsl(38_92%_40%)] border-[hsl(38_92%_50%/0.3)]"
-      : "bg-[hsl(0_84%_60%/0.1)] text-destructive border-[hsl(0_84%_60%/0.25)]";
+    ? "bg-green-50 text-green-700 border-green-300"
+    : botStatus.status === "pairing" || botStatus.status === "awaiting-pairing"
+      ? "bg-amber-50 text-amber-700 border-amber-300"
+      : "bg-red-50 text-destructive border-red-200";
 
   return (
     <AdminPage
       eyebrow="WhatsApp Bot"
       title="Bot control & pairing"
-      description="Link your WhatsApp number via QR code or 8-digit pairing code — entirely from this dashboard."
+      description="Link your WhatsApp, configure the bot, and monitor status."
       actions={
-        <AdminButton onClick={() => { fetchStatus(); fetchQr(); }} type="button" variant="ghost">
-          <RefreshCw size={14} aria-hidden /> Refresh
+        <AdminButton onClick={refreshAll} type="button" variant="ghost" disabled={refreshing}>
+          <RefreshCw size={14} className={refreshing ? "animate-spin" : ""} aria-hidden /> Refresh
         </AdminButton>
       }
     >
-      {/* ── Status card ── */}
-      <AdminCard className="!p-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-display text-[15px] font-semibold text-foreground">Bot status</h2>
-          <span className={`inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] ${statusColor}`}>
-            {isOnline ? <Wifi size={10} aria-hidden /> : <WifiOff size={10} aria-hidden />}
-            {botStatus.status}
+      {/* ── Compact Status card ── */}
+      <AdminCard className="!py-3 !px-4">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-center gap-3">
+            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.15em] ${statusColor}`}>
+              {isOnline ? <Wifi size={10} aria-hidden /> : <WifiOff size={10} aria-hidden />}
+              {botStatus.status}
+            </span>
+            {botStatus.linkedNumber && (
+              <span className="text-sm font-mono text-foreground">{botStatus.linkedNumber}</span>
+            )}
+            {botStatus.disconnectedAt && !isOnline && (
+              <span className="text-[11px] text-muted-foreground hidden sm:inline">
+                Disconnected {new Date(botStatus.disconnectedAt).toLocaleTimeString()}
+              </span>
+            )}
+          </div>
+          <span className="text-[11px] text-muted-foreground font-mono">
+            {botStatus.lastSeen ? `Seen ${new Date(botStatus.lastSeen).toLocaleTimeString()}` : "Not seen yet"}
           </span>
         </div>
-
-        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          <Stat label="Linked number" value={botStatus.linkedNumber ?? "—"} />
-          <Stat label="Display name" value={botStatus.displayName ?? "—"} />
-          <Stat label="Portfolio items" value={String(botStatus.portfolioCount)} />
-          <Stat label="Last seen" value={botStatus.lastSeen ? new Date(botStatus.lastSeen).toLocaleTimeString() : "—"} />
-        </div>
-
-        {botStatus.lastUpload && (
-          <p className="mt-2 text-[11px] text-foreground-muted">
-            Last upload: <span className="font-semibold text-foreground">{botStatus.lastUpload}</span>
-          </p>
-        )}
       </AdminCard>
 
       {/* ── Linking card ── */}
       {isNotLinked && (
         <AdminCard>
-          <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-            <Smartphone size={18} aria-hidden /> Link WhatsApp
+          <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2">
+            <Smartphone size={16} aria-hidden /> Link WhatsApp
           </h2>
 
           {/* Pairing code display */}
           {botStatus.pairingCode && (
             <div className="mt-4 text-center py-4 rounded-xl border border-border bg-secondary">
-              <p className="text-sm text-foreground-muted mb-3">Enter this 8-digit code in WhatsApp to link:</p>
+              <p className="text-sm text-foreground-muted mb-3">Enter this 8-digit code in WhatsApp:</p>
               <div className="font-mono text-3xl font-bold tracking-[0.2em] text-primary bg-background-elev inline-block px-6 py-3 rounded-lg border border-primary/30">
                 {botStatus.pairingCode}
               </div>
-              <p className="text-xs text-foreground-muted mt-3">
+              <p className="text-xs text-muted-foreground mt-3">
                 WhatsApp → Settings → Linked Devices → Link with phone number
               </p>
             </div>
@@ -286,24 +288,23 @@ export default function WhatsAppAdminPage() {
           {/* QR code display */}
           {!botStatus.pairingCode && qrDataUrl && (
             <div className="mt-4 text-center py-4 rounded-xl border border-border bg-secondary">
-              <p className="text-sm text-foreground-muted mb-3">Scan this QR code with WhatsApp:</p>
+              <p className="text-sm text-muted-foreground mb-3">Scan with WhatsApp:</p>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={qrDataUrl} alt="WhatsApp QR code" className="mx-auto rounded-lg border border-border" width={220} height={220} />
               {qrAge && (
-                <p className="text-[11px] text-foreground-muted mt-2">
-                  Generated at {new Date(qrAge).toLocaleTimeString()}
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  Generated {new Date(qrAge).toLocaleTimeString()} · refreshes every 4s
                 </p>
               )}
-              <p className="text-xs text-foreground-muted mt-2">QR expires in ~20 seconds — auto-refreshes every 8s</p>
             </div>
           )}
 
           {/* 8-digit pairing code request */}
           <div className="mt-4 space-y-3">
-            <p className="text-sm text-foreground-muted">
-              Alternatively, request an 8-digit pairing code. Enter your WhatsApp number (with country code, no +):
+            <p className="text-sm text-muted-foreground">
+              Or request an 8-digit pairing code (no need to scan QR):
             </p>
-            <AdminField label="Phone number">
+            <AdminField label="Phone number (country code, no +)">
               <div className="flex gap-2">
                 <AdminInput
                   value={pairPhone}
@@ -316,7 +317,7 @@ export default function WhatsAppAdminPage() {
               </div>
             </AdminField>
             {pairMsg && (
-              <p className="text-sm text-foreground-muted">{pairMsg}</p>
+              <p className="text-sm text-muted-foreground">{pairMsg}</p>
             )}
           </div>
         </AdminCard>
@@ -324,11 +325,11 @@ export default function WhatsAppAdminPage() {
 
       {/* ── Bot config ── */}
       <AdminCard>
-        <h2 className="font-display text-lg font-semibold text-foreground">Bot configuration</h2>
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+        <h2 className="font-display text-base font-semibold text-foreground">Bot configuration</h2>
+        <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <AdminField
-            label="Allowed phone numbers"
-            hint="Comma-separated E.164 format, no + sign. Only these numbers can issue bot commands."
+            label="Allowed numbers"
+            hint="Comma-separated E.164, no + sign."
           >
             <AdminInput
               value={envConfig.COMPANION_ALLOWED_NUMBERS ?? ""}
@@ -338,7 +339,7 @@ export default function WhatsAppAdminPage() {
           </AdminField>
           <AdminField
             label="Data directory"
-            hint="Absolute path to the data/ folder where portfolio.json lives."
+            hint="Absolute path to the data/ folder."
           >
             <AdminInput
               value={envConfig.COMPANION_DATA_DIR ?? ""}
@@ -347,55 +348,38 @@ export default function WhatsAppAdminPage() {
             />
           </AdminField>
         </div>
-
         {error && (
           <p className="mt-3 flex items-center gap-2 text-sm text-destructive">
             <AlertTriangle size={14} aria-hidden /> {error}
           </p>
         )}
         {saved && (
-          <p className="mt-3 flex items-center gap-2 text-sm text-[hsl(142_70%_40%)]">
-            <CheckCircle2 size={14} aria-hidden /> Config saved
+          <p className="mt-3 flex items-center gap-2 text-sm text-green-700">
+            <CheckCircle2 size={14} aria-hidden /> Saved
           </p>
         )}
-
-        <div className="mt-5">
+        <div className="mt-4">
           <AdminButton onClick={saveEnv} type="button" disabled={loading}>
-            <Save size={14} aria-hidden /> {loading ? "Saving..." : "Save config"}
+            <Save size={14} aria-hidden /> {loading ? "Saving..." : "Save"}
           </AdminButton>
         </div>
       </AdminCard>
 
       {/* ── Session reset ── */}
       <AdminCard>
-        <h2 className="font-display text-lg font-semibold text-foreground flex items-center gap-2">
-          <ShieldOff size={18} className="text-destructive" aria-hidden /> Session management
+        <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2">
+          <ShieldOff size={16} className="text-destructive" aria-hidden /> Session
         </h2>
-        <p className="mt-1 text-sm text-foreground-muted">
-          Reset the WhatsApp session to unlink the current number. The bot will show a fresh QR on next startup.
-          This deletes the <code className="font-mono text-xs">.wwebjs_auth</code> folder on the server.
+        <p className="mt-1 text-sm text-muted-foreground">
+          Unlink the current WhatsApp number. Bot will show a fresh QR on next restart.
         </p>
-        <div className="mt-4">
+        <div className="mt-3">
           <AdminButton variant="danger" type="button" onClick={resetSession} disabled={loading}>
             <Trash2 size={14} aria-hidden />
-            {resetConfirm ? "Confirm — this will unlink WhatsApp" : "Reset session / unlink"}
+            {resetConfirm ? "Confirm unlink" : "Reset / unlink"}
           </AdminButton>
-          {resetConfirm && (
-            <p className="mt-2 text-xs text-destructive">
-              Click again to confirm. Restart the bot after reset.
-            </p>
-          )}
         </div>
       </AdminCard>
     </AdminPage>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-lg border border-border bg-background-elev px-3 py-2 flex flex-col justify-center">
-      <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-foreground-subtle">{label}</p>
-      <p className="text-xs font-semibold text-foreground truncate mt-0.5" title={value}>{value}</p>
-    </div>
   );
 }

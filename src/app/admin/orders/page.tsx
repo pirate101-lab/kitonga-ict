@@ -98,7 +98,7 @@ export default function AdminOrdersPage() {
     <AdminPage
       eyebrow="Orders inbox"
       title="Order tracking · Kanban"
-      description="Every brief that leaves the homepage Hero, the FastOrderForm intake, and any direct WhatsApp Fast Order CTA is logged here automatically. Drag the status pill to move work through the pipeline."
+      description="Briefs pipeline — move cards through New → In Progress → Review → Delivered."
       actions={
         <AdminButton variant="ghost" onClick={reset} type="button">
           Reset seed

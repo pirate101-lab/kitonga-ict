@@ -150,7 +150,7 @@ export default function AdminPortfolioPage() {
     <AdminPage
       eyebrow="Portfolio CMS"
       title="Portfolio (live DB)"
-      description="The grid here is hydrated from /api/portfolio (a server-side JSON store seeded with placeholder pieces). Save flushes individual items to the DB; the public /portfolio grid pulls from the same source."
+      description="Manage portfolio pieces — each saved item updates the public gallery."
       actions={
         <>
           <AdminButton variant="ghost" onClick={refresh} type="button">
@@ -169,9 +169,7 @@ export default function AdminPortfolioPage() {
         </div>
       ) : items.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-card-border bg-card p-10 text-center text-muted-foreground">
-          No pieces yet — add one above or run{" "}
-          <code className="font-mono text-primary">node scripts/seed-portfolio.mjs</code>{" "}
-          on the server.
+          No pieces yet — add one above.
         </div>
       ) : (
         <div className="grid gap-4">
