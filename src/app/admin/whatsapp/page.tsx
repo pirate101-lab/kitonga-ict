@@ -212,7 +212,7 @@ export default function WhatsAppAdminPage() {
           </span>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
           <Stat label="Linked number" value={botStatus.linkedNumber ?? "—"} />
           <Stat label="Display name" value={botStatus.displayName ?? "—"} />
           <Stat label="Portfolio items" value={String(botStatus.portfolioCount)} />
@@ -343,9 +343,9 @@ export default function WhatsAppAdminPage() {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-border bg-background-elev p-3">
-      <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-foreground-subtle">{label}</p>
-      <p className="mt-1 text-sm font-semibold text-foreground truncate" title={value}>{value}</p>
+    <div className="rounded-lg border border-border bg-background-elev px-3 py-2 flex flex-col justify-center">
+      <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-foreground-subtle">{label}</p>
+      <p className="text-xs font-semibold text-foreground truncate mt-0.5" title={value}>{value}</p>
     </div>
   );
 }

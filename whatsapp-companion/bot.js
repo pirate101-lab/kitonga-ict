@@ -14,17 +14,17 @@ import dotenv from 'dotenv';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Load the root .env (one level up from whatsapp-companion/)
-dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
+dotenv.config({ path: path.resolve(__dirname, '..', '.env.local') });
 
 // Ensure required COMPANION_* keys exist in .env with placeholder values if missing.
-await ensureEnvKeys(path.resolve(__dirname, '..', '.env'), {
+await ensureEnvKeys(path.resolve(__dirname, '..', '.env.local'), {
   COMPANION_ALLOWED_NUMBERS: '254715927114',
   COMPANION_DATA_DIR:        path.resolve(__dirname, '..', 'data'),
   COMPANION_WA_SESSION_PATH: path.join(__dirname, '.wwebjs_auth'),
 });
 
 // Reload .env after possible mutation
-dotenv.config({ path: path.resolve(__dirname, '..', '.env'), override: true });
+dotenv.config({ path: path.resolve(__dirname, '..', '.env.local'), override: true });
 
 // whatsapp-web.js is a CommonJS module; use createRequire to import it in ESM
 const require = createRequire(import.meta.url);

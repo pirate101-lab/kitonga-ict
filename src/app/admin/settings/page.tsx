@@ -37,27 +37,13 @@ const DEFAULT_SETTINGS: AdminSiteSettings = {
 };
 
 export default function AdminSettingsPage() {
-  const [cldCloudName, setCldCloudName] = useState('');
-  const [cldApiKey, setCldApiKey]       = useState('');
-  const [cldApiSecret, setCldApiSecret] = useState('');
-  const [cldSaving, setCldSaving]       = useState(false);
-  const [cldSaved, setCldSaved]         = useState(false);
-  const [cldError, setCldError]         = useState<string | null>(null);
+
 
   const [settings, setSettings] = useState<AdminSiteSettings>(DEFAULT_SETTINGS);
   const [savedAt, setSavedAt] = useState<number | null>(null);
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('kitonga.adminToken') ?? '' : '';
-    fetch('/api/admin/whatsapp/env', { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => {
-        if (d.env) {
-          setCldCloudName(d.env.CLOUDINARY_CLOUD_NAME ?? '');
-          setCldApiKey(d.env.CLOUDINARY_API_KEY ?? '');
-        }
-      })
-      .catch(() => {});
+    // Other effects can be placed here if needed
   }, []);
 
   useEffect(() => {
@@ -78,25 +64,7 @@ export default function AdminSettingsPage() {
     setSavedAt(Date.now());
   };
 
-  async function saveCldConfig() {
-    setCldSaving(true);
-    setCldError(null);
-    const token = typeof window !== 'undefined' ? localStorage.getItem('kitonga.adminToken') ?? '' : '';
-    const payload: Record<string,string> = {};
-    if (cldCloudName) payload.CLOUDINARY_CLOUD_NAME = cldCloudName;
-    if (cldApiKey)    payload.CLOUDINARY_API_KEY    = cldApiKey;
-    if (cldApiSecret) payload.CLOUDINARY_API_SECRET = cldApiSecret;
-    try {
-      const res = await fetch('/api/admin/whatsapp/env', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify(payload),
-      });
-      if (res.ok) { setCldSaved(true); setTimeout(() => setCldSaved(false), 3000); }
-      else { const d = await res.json(); setCldError(d.error ?? 'Save failed'); }
-    } catch(e) { setCldError(String(e)); }
-    finally { setCldSaving(false); }
-  }
+
 
  return (
  <AdminPage
@@ -217,30 +185,7 @@ export default function AdminSettingsPage() {
 
  <FooterLinksForm />
 
-  <AdminCard>
-    <h2 className="font-display text-lg font-semibold text-foreground">Cloudinary credentials</h2>
-    <p className="mt-1 text-sm text-foreground-muted">
-      Saved to your server&apos;s <code className="font-mono text-xs">.env</code>. The API secret is write-only.
-    </p>
-    <div className="mt-5 grid gap-4 sm:grid-cols-2">
-      <AdminField label="Cloud name">
-        <AdminInput value={cldCloudName} onChange={e => setCldCloudName(e.target.value)} placeholder="your-cloud" />
-      </AdminField>
-      <AdminField label="API key">
-        <AdminInput value={cldApiKey} onChange={e => setCldApiKey(e.target.value)} placeholder="123456789" />
-      </AdminField>
-      <AdminField label="API secret (write-only)" hint="Leave blank to keep existing.">
-        <AdminInput type="password" value={cldApiSecret} onChange={e => setCldApiSecret(e.target.value)} placeholder="Enter to update" />
-      </AdminField>
-    </div>
-    {cldError && <p className="mt-2 text-sm text-destructive">{cldError}</p>}
-    {cldSaved && <p className="mt-2 text-sm text-[hsl(142_70%_40%)]" >✅ Saved to .env</p>}
-    <div className="mt-4">
-      <AdminButton type="button" onClick={saveCldConfig} disabled={cldSaving}>
-        <Save size={14} aria-hidden /> {cldSaving ? 'Saving...' : 'Save Cloudinary config'}
-      </AdminButton>
-    </div>
-  </AdminCard>
+
 
  <ChangeUsernameForm />
  <ChangePasswordForm />

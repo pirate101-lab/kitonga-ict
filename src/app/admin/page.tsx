@@ -119,35 +119,17 @@ export default function AdminOverviewPage() {
       eyebrow="Dashboard"
       title="Site control panel"
       description="Manage every section of the live KITONGA-ICT website from here."
+      actions={
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] bg-white px-3 py-1.5 text-[12px] font-medium text-[#333] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
+        >
+          <RefreshCw size={12} aria-hidden />
+          Refresh
+        </button>
+      }
     >
-      {/* Live site link */}
-      <div className="flex items-center justify-between rounded-xl border border-[#cbd5e1] bg-[#f2f5f9] px-4 py-3">
-        <div className="flex items-center gap-2 text-[13px] text-[#333]">
-          <Globe size={14} className="text-[#0067b8]" aria-hidden />
-          <span className="font-medium">Live site:</span>
-          <span className="text-[#555]">localhost:3000</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <a
-            href="/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] bg-white px-3 py-1.5 text-[12px] font-medium text-[#333] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
-          >
-            <ExternalLink size={12} aria-hidden />
-            Open site
-          </a>
-          <button
-            type="button"
-            onClick={() => window.location.reload()}
-            className="flex items-center gap-1.5 rounded-lg border border-[#cbd5e1] bg-white px-3 py-1.5 text-[12px] font-medium text-[#333] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors"
-          >
-            <RefreshCw size={12} aria-hidden />
-            Refresh
-          </button>
-        </div>
-      </div>
-
       {/* Stat tiles */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {tiles.map((tile) => {
@@ -217,33 +199,7 @@ export default function AdminOverviewPage() {
         </AdminCard>
 
         <div className="flex flex-col gap-4">
-          {/* Preview links */}
-          <AdminCard>
-            <h2 className="text-[15px] font-bold text-[#0a0a0a] mb-3 flex items-center gap-2">
-              <FileImage size={15} className="text-[#0067b8]" aria-hidden />
-              Live page previews
-            </h2>
-            <div className="flex flex-col gap-1.5">
-              {[
-                { href: "/", label: "Homepage" },
-                { href: "/services", label: "Services" },
-                { href: "/portfolio", label: "Portfolio" },
-                { href: "/about", label: "About" },
-                { href: "/order", label: "Order form" },
-              ].map((page) => (
-                <a
-                  key={page.href}
-                  href={page.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-lg border border-[#cbd5e1] px-3.5 py-2 text-[13px] font-medium text-[#333] hover:border-[#0067b8] hover:text-[#0067b8] transition-colors group"
-                >
-                  {page.label}
-                  <ExternalLink size={12} className="text-[#bbb] group-hover:text-[#0067b8] transition-colors" aria-hidden />
-                </a>
-              ))}
-            </div>
-          </AdminCard>
+
 
           {/* Settings shortcut */}
           <AdminCard>
