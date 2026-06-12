@@ -187,7 +187,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             onClick={() => setMobileNavOpen(false)}
           />
           {/* Panel — right-anchored with gap from edge, max half screen width */}
-          <div className="lg:hidden fixed right-3 top-[45px] mt-1 z-40 w-[52vw] max-w-[240px] min-w-[180px] bg-card border border-card-border shadow-lg rounded-2xl px-2 py-2">
+          <div className="lg:hidden fixed right-3 top-[45px] mt-1 z-40 w-[57vw] max-w-[264px] min-w-[198px] bg-card border border-card-border shadow-lg rounded-2xl px-3 py-2.5">
             <nav className="flex flex-col gap-0.5" aria-label="Admin mobile">
               {visibleNav.map((item) => {
                 const Icon = item.icon;

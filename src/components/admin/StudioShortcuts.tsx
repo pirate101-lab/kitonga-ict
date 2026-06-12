@@ -6,9 +6,7 @@ import {
   Box,
   Cloud,
   Image as ImageIcon,
-  MessageSquare,
   Package,
-  Sliders,
   Sparkles,
   UserCog,
 } from "lucide-react";
@@ -37,12 +35,6 @@ const SHORTCUTS: Shortcut[] = [
     icon: ImageIcon,
   },
   {
-    href: "/admin/sliders",
-    label: "Hero Sliders",
-    description: "Manage the homepage hero deck.",
-    icon: Sliders,
-  },
-  {
     href: "/admin/services",
     label: "Services & Pricing",
     description: "Toggle services and edit starting prices.",
@@ -55,12 +47,6 @@ const SHORTCUTS: Shortcut[] = [
     icon: Sparkles,
   },
   {
-    href: "/admin/testimonials",
-    label: "Testimonials",
-    description: "Curate the client quote wall.",
-    icon: MessageSquare,
-  },
-  {
     href: "/admin/orders",
     label: "Orders Inbox",
     description: "Kanban for incoming briefs.",
@@ -69,7 +55,7 @@ const SHORTCUTS: Shortcut[] = [
   {
     href: "/admin/team",
     label: "Team",
-    description: "Invite admins, reset passwords, manage roles.",
+    description: "Invite admins, manage roles.",
     icon: UserCog,
   },
 ];
